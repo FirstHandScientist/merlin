@@ -416,6 +416,99 @@ private:
 	std::vector<size_t> m_dim;
 };
 
+///
+/// \brief Convert index of variable configuration from order to set.
+///
+/// Given a configuration of the variables in the source order, convert the
+/// corresponding index (0-based) to that corresponding to the configuration of
+/// the same variables in a target order (i.e., permutation of the source vars).
+///
+class convert_index {
+public:
+
+	// BigEndian assumes that the first variable changes the fastest
+	// UAI input is assumed to follow the LittleEndian convention, whereas
+	// the internal representation of the factors assume BigEndian.
+
+	///
+	/// \brief Construct index convertor.
+	/// \param order 	the source variable order
+	/// \param source_big_endian the source configuration based on BigEndian
+	/// \param target_big_endian the target configuration based on BigEndian
+	///
+	convert_index(const std::vector<variable>& order, bool source_big_endian = false,
+			bool target_big_endian = false) {
+
+		m_source_order = order; // save source variable order
+		m_source_big_endian = source_big_endian; // source representation
+		m_target_big_endian = target_big_endian; // target representation
+		variable_set _vs = variable_set(order.begin(), order.end(), order.size());
+		for (variable_set::const_iterator i = _vs.begin(); i != _vs.end(); ++i) {
+			m_target_order.push_back(*i);
+		}
+		m_dim.resize(order.size());
+		for (size_t j = 0; j < order.size(); ++j) {
+			m_dim[j] = order[j].states(); // save dimensions in source order
+		}
+	}
+
+	///
+	/// \brief Convert a source index into a target index.
+	///
+	size_t convert(size_t i) {
+		std::vector<size_t> I(m_dim.size()); // configuration of source variables
+		if (m_source_big_endian) { // start from the first variable in order
+			for (size_t v = 0; v < m_dim.size(); ++v) {
+				I[v] = i % m_dim[v];
+				i -= I[v];
+				i /= m_dim[v];
+			}
+		} else { // start from last variable
+			for (int v = m_dim.size()-1; v >= 0; --v) {
+				I[v] = i % m_dim[v];
+				i -= I[v];
+				i /= m_dim[v];
+			}
+		}
+
+		std::vector<size_t> J(m_dim.size()); // get configuration of target variables
+		for (size_t j = 0; j < m_target_order.size(); ++j) {
+			for (size_t k = 0; k < m_source_order.size(); ++k) {
+				if (m_target_order[j] == m_source_order[k]) {
+					J[j] = I[k];
+					break;
+				}
+			}
+		}
+
+		// compute the index of the configuration in the target space
+		size_t r = 0, m = 1;
+		if (m_target_big_endian) {
+			for (size_t j = 0; j < m_target_order.size(); ++j) {
+				r += m*J[j];
+				m *= m_target_order[j].states();
+			}
+		} else {
+			for (int j = m_target_order.size()-1; j >= 0; --j) {
+				r += m*J[j];
+				m *= m_target_order[j].states();
+			}
+		}
+
+		return r;
+	}
+
+private:
+	std::vector<size_t> m_dim;				///< Source variable dimensions
+
+	bool m_source_big_endian;				///< Source representation (BE or LE)
+	bool m_target_big_endian;				///< Target representation (BE or LE)
+	std::vector<variable> m_source_order;	///< Source variable order (unsorted)
+	std::vector<variable> m_target_order;	///< Target variable set (sorted)
+};
+
+
+
 } // namespace
 
 #endif /* IBM_MERLIN_INDEX_H_ */

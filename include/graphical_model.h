@@ -175,11 +175,10 @@ public:
 		for (size_t i = 0; i < ncliques; i++) {
 			is >> nval;
 			assert(nval == sets[i].num_states());
-			tables[i] = factor(sets[i], 0.0); // preallocate memory and convert from given order, bigEndian
-			permute_index pi(cliques[i], true);
-			//pi = pi.inverse();   // to our order
+			tables[i] = factor(sets[i], 0.0); // preallocate memory
+			convert_index ci(cliques[i], false, true); // convert from source order (littleEndian) to target order (bigEndian)
 			for (size_t j = 0; j < nval; j++) {
-				size_t k = pi.convert(j);	// get the index in the factor table
+				size_t k = ci.convert(j);	// get the index in the factor table
 				is >> fval; // read the factor value;
 				if (fval == 0.0) fval = 1e-06; // for numerical stability
 				tables[i][k] = fval; // save the factor value into the table

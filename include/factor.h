@@ -44,7 +44,20 @@ namespace merlin {
 /// factor encodes a potential (sometimes a probability distribution)
 /// defined over a subset of discrete random variables, called a *scope*, and 
 /// associates each configuration of the variables in the scope with a 
-/// positive real value (sometimes a probability value).
+/// positive real value (sometimes a probability value). The scope is assumed
+/// to be sorted lexicogaphically (e.g., [x1,x2,x3]) Also, the indexing of
+/// configurations in the factor table is assumed to be based on the BigEndian
+/// convention, namely the *first* variable in the ordered scope changes
+/// the fastest, then the *second* variable changes its value and so on.
+/// For example, consider a factor over binary variables [x1,x2,x3].
+/// The corresponding factor table is indexed as follows (internally):
+///
+/// 0: [0,0,0]    4: [0,0,1]
+/// 1: [1,0,0]    5: [1,0,1]
+/// 2: [0,1,0]    6: [0,1,1]
+/// 3: [1,1,0]    7: [1,1,1]
+///
+/// (For converting between source and target orders, use the convert_index class)
 ///
 class factor {
 public:

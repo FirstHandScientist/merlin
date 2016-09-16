@@ -123,7 +123,7 @@ public:
 	/// \param orig 		The graphical model prior to asserting evidence
 	///
 	void write_solution(const char* file_name, const std::map<size_t, size_t>& evidence,
-			const std::map<size_t, size_t>& old2new, const graphical_model& orig ) {
+			const std::map<size_t, size_t>& old2new, const graphical_model& orig) {
 
 		// Open the output file
 		std::ofstream out(file_name);
@@ -133,14 +133,6 @@ public:
 
 		switch (m_task) {
 		case Task::PR:
-			{
-				out << "PR" << std::endl;
-				out << std::fixed << std::setprecision(6)
-					<< (m_log_z + std::log(orig.get_global_const())) << " (" << std::scientific << std::setprecision(6)
-					<< std::exp(m_log_z + std::log(orig.get_global_const())) << ")" << std::endl;
-
-				break;
-			}
 		case Task::MAR:
 			{
 				out << "PR" << std::endl;

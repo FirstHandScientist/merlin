@@ -80,6 +80,7 @@ protected:
 private:
 	// Local members:
 
+	bool m_first_solution;				///< Flag indicating the first solution
 	void* m_gmo;						///< Original graphical model.
 	std::map<vindex, size_t> m_evidence;///< Evidence as variable value pairs.
 	std::vector<vindex> m_query;		///< Query variables for MMAP tasks.

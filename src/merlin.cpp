@@ -43,6 +43,7 @@ Merlin::Merlin() {
 	m_param_iterations = 100;
 	m_param_samples = 100;
 	m_gmo = NULL;
+	m_first_solution = true;
 }
 
 ///
@@ -303,7 +304,8 @@ int Merlin::run() {
 
 		// Setup the solver to run
 		if ( m_task == MERLIN_TASK_PR ) {
-			std::string output_file = m_filename + ".merlin.PR";
+//			std::string output_file = m_filename + ".merlin.PR";
+			std::string output_file = m_filename + ".PR";
 			if (m_algorithm == MERLIN_ALGO_WMB) {
 				merlin::wmb s(fs);
 				std::ostringstream oss;
@@ -313,7 +315,7 @@ int Merlin::run() {
 					<< "Task=PR,Debug=0";
 				s.set_properties(oss.str());
 				s.run();
-				s.write_solution(output_file.c_str(), m_evidence, old2new, gm);
+				s.write_solution(output_file.c_str(), m_evidence, old2new, gm, m_first_solution);
 			} else if (m_algorithm == MERLIN_ALGO_BE) {
 				merlin::be s(fs);
 				std::ostringstream oss;
@@ -324,7 +326,8 @@ int Merlin::run() {
 				s.write_solution(output_file.c_str(), m_evidence, old2new, gm);
 			}
 		} else if ( m_task == MERLIN_TASK_MAR ) {
-			std::string output_file = m_filename + ".merlin.MAR";
+//			std::string output_file = m_filename + ".merlin.MAR";
+			std::string output_file = m_filename + ".MAR";
 			if (m_algorithm == MERLIN_ALGO_WMB) {
 				merlin::wmb s(fs);
 				std::ostringstream oss;
@@ -334,7 +337,7 @@ int Merlin::run() {
 					<< "Task=MAR";
 				s.set_properties(oss.str());
 				s.run();
-				s.write_solution(output_file.c_str(), m_evidence, old2new, gm);
+				s.write_solution(output_file.c_str(), m_evidence, old2new, gm, m_first_solution);
 			} else if (m_algorithm == MERLIN_ALGO_IJGP) {
 				merlin::ijgp s(fs);
 				std::ostringstream oss;
@@ -372,7 +375,8 @@ int Merlin::run() {
 				s.write_solution(output_file.c_str(), m_evidence, old2new, gm);
 			}
 		} else if ( m_task == MERLIN_TASK_MAP ) {
-			std::string output_file = m_filename + ".merlin.MAP";
+//			std::string output_file = m_filename + ".merlin.MAP";
+			std::string output_file = m_filename + ".MAP";
 			if (m_algorithm == MERLIN_ALGO_WMB) {
 				merlin::wmb s(fs);
 				std::ostringstream oss;
@@ -390,7 +394,7 @@ int Merlin::run() {
 				}
 				s.set_query(qvars);
 				s.run();
-				s.write_solution(output_file.c_str(), m_evidence, old2new, gm);
+				s.write_solution(output_file.c_str(), m_evidence, old2new, gm, m_first_solution);
 			} else if (m_algorithm == MERLIN_ALGO_JGLP) {
 				merlin::jglp s(fs);
 				std::ostringstream oss;
@@ -438,7 +442,8 @@ int Merlin::run() {
 			}
 			// follow with search-based AOBB, AOBF, RBFAOO
 		} else if ( m_task == MERLIN_TASK_MMAP ) {
-			std::string output_file = m_filename + ".merlin.MMAP";
+//			std::string output_file = m_filename + ".merlin.MMAP";
+			std::string output_file = m_filename + ".MMAP";
 			if (m_algorithm == MERLIN_ALGO_WMB) {
 				merlin::wmb s(fs);
 				std::ostringstream oss;
@@ -455,7 +460,7 @@ int Merlin::run() {
 				}
 				s.set_query(qvars);
 				s.run();
-				s.write_solution(output_file.c_str(), m_evidence, old2new, gm);
+				s.write_solution(output_file.c_str(), m_evidence, old2new, gm, m_first_solution);
 			} else if (m_algorithm == MERLIN_ALGO_BE) {
 				merlin::be s(fs);
 				std::ostringstream oss;
@@ -474,6 +479,9 @@ int Merlin::run() {
 			}
 			// follow with search-based AOBB, AOBF, RBFAOO
 		}
+
+		if (m_first_solution)
+			m_first_solution = false;
 
 		return EXIT_SUCCESS;
 	} catch (const std::runtime_error& e) {

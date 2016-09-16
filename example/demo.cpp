@@ -12,6 +12,7 @@
  Here the script will be called exampleProgram.
  ============================================================================
  */
+#include <string.h>
 #include <string>
 #include <iostream>
 #include "merlin.h"
@@ -118,9 +119,57 @@ void demo_wcnf2uai(const char* file_name) {
 	std::cout << "Wrote uai file: " << f << std::endl;
 }
 
+// Run the MAR solver for the UAI competition
+// ./solver <input-model-file> <input-evidence-file> <input-query-file> <PR|MPE|MAR|MMAP>
+void uai(int argc, char** argv) {
+	if (argc != 5) {
+		std::cout << "UAI-2016 Inference evaluation format is:" << std::endl;
+		std::cout << "./solver <input-model-file> <input-evidence-file> <input-query-file> <PR|MPE|MAR|MMAP>" << std::endl;
+		exit(1);
+	}
+
+	const char* input_model_file = argv[1];		// input file
+	const char* input_evid_file = argv[2]; 		// input evidence file
+	const char* input_query_file = argv[3];		// input query file (for MMAP)
+	const char* input_task = argv[4];			// input task name
+
+	// Select the inference task
+	size_t task = MERLIN_TASK_PR;
+	size_t START_IBOUND = 2; 					// default ibound is 2
+	size_t END_IBOUND = 30;						// MAX ibound to run
+	size_t iterations = 20;						// default iterations is 20
+	if (strcmp(input_task, "PR") == 0) {
+		task = MERLIN_TASK_PR;
+	} else if (strcmp(input_task, "MAR") == 0) {
+		task = MERLIN_TASK_MAR;
+	} else if (strcmp(input_task, "MAP") == 0) {
+		task = MERLIN_TASK_MAP;
+	} else if (strcmp(input_task, "MMAP") == 0) {
+		task = MERLIN_TASK_MMAP;
+	}
+
+	// Setup Merlin engine
+	Merlin eng;
+	eng.set_task(task);
+	eng.set_algorithm(MERLIN_ALGO_WMB);
+	eng.read_model(input_model_file);
+	eng.read_evidence(input_evid_file);
+	if (task == MERLIN_TASK_MMAP) {
+		eng.read_query(input_query_file);
+	}
+
+	for (size_t ib = START_IBOUND; ib <= END_IBOUND; ++ib) {
+		eng.set_param_ibound(ib);
+		eng.set_param_iterations(iterations);
+		eng.run(); // should "append" instead of overwrite the output file.
+	}
+}
 
 // Main
 int main(int argc, char** argv) {
+
+	// Call the "uai" solver
+	uai(argc, argv);
 
 	// Call the 'run' function
 	//demo_run();
@@ -129,7 +178,7 @@ int main(int argc, char** argv) {
 	//demo_api();
 
 	// Call the 'debug' function
-	demo_debug();
+//	demo_debug();
 
 //	demo_convert(argv[1]);
 

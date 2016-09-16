@@ -125,24 +125,40 @@ public:
 	/// \param orig 		The graphical model prior to asserting evidence
 	///
 	void write_solution(const char* file_name, const std::map<size_t, size_t>& evidence,
-			const std::map<size_t, size_t>& old2new, const graphical_model& orig ) {
+			const std::map<size_t, size_t>& old2new, const graphical_model& orig,
+			const bool first = true) {
 
-		// Open the output file
-		std::ofstream out(file_name);
+		// Open the output file (for append)
+		std::ofstream out(file_name, std::ios::out | std::ios::app);
 		if (out.fail()) {
 			throw std::runtime_error("Error while opening the output file.");
 		}
 
 		switch (m_task) {
 		case Task::PR:
+			{
+				if (first) out << "PR" << std::endl;
+				else out << "-BEGIN-" << std::endl;
+				double logZ = (m_log_z + std::log(orig.get_global_const()));
+				//logZ = std::log10(std::exp(logZ));
+				logZ = logZ/std::log(10);
+				out << std::fixed << std::setprecision(6) << logZ << std::endl;
+
+//				out << std::fixed << std::setprecision(6)
+//					<< (m_log_z + std::log(orig.get_global_const())) << " (" << std::scientific << std::setprecision(6)
+//					<< std::exp(m_log_z + std::log(orig.get_global_const())) << ")" << std::endl;
+
+				break;
+			}
 		case Task::MAR:
 			{
-				out << "PR" << std::endl;
-				out << std::fixed << std::setprecision(6)
-					<< (m_log_z + std::log(orig.get_global_const())) << " (" << std::scientific << std::setprecision(6)
-					<< std::exp(m_log_z + std::log(orig.get_global_const())) << ")" << std::endl;
+//				out << "PR" << std::endl;
+//				out << std::fixed << std::setprecision(6)
+//					<< (m_log_z + std::log(orig.get_global_const())) << " (" << std::scientific << std::setprecision(6)
+//					<< std::exp(m_log_z + std::log(orig.get_global_const())) << ")" << std::endl;
 
-				out << "MAR" << std::endl;
+				if (first) out << "MAR" << std::endl;
+				else out << "-BEGIN-" << std::endl;
 				out << orig.nvar();
 				for (vindex i = 0; i < orig.nvar(); ++i) {
 					variable v = orig.var(i);
@@ -167,7 +183,8 @@ public:
 			}
 		case Task::MAP:
 			{
-				out << "MAP" << std::endl;
+				if (first) out << "MAP" << std::endl;
+				else out << "-BEGIN-" << std::endl;
 				out << orig.nvar();
 				for (vindex i = 0; i < orig.nvar(); ++i) {
 					try { // evidence variable
@@ -185,7 +202,8 @@ public:
 		case Task::MMAP:
 			{
 				// evidence variables are a disjoint set from the query variables
-				out << "MMAP" << std::endl;
+				if (first) out << "MMAP" << std::endl;
+				else out << "-BEGIN-" << std::endl;
 				out << m_query.size();
 				for (vindex i = 0; i < m_query.size(); ++i) {
 					vindex j = m_query[i];

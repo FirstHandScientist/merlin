@@ -305,12 +305,17 @@ int Merlin::run() {
 		// Setup the solver to run
 		if ( m_task == MERLIN_TASK_PR ) {
 //			std::string output_file = m_filename + ".merlin.PR";
-			std::string output_file = m_filename + ".PR";
+			size_t found = m_filename.find_last_of("/");
+			std::string prob_name = (found != std::string::npos) ?
+					m_filename.substr(found + 1) : m_filename;
+			std::string output_file = "./" + prob_name + ".PR";
+
 			if (m_algorithm == MERLIN_ALGO_WMB) {
 				merlin::wmb s(fs);
 				std::ostringstream oss;
 				oss << "iBound=" << m_param_ibound << ","
 					<< "Order=MinFill" << ","
+					<< "OrderIter=100" << ","
 					<< "Iter=" << m_param_iterations << ","
 					<< "Task=PR,Debug=0";
 				s.set_properties(oss.str());
@@ -327,12 +332,17 @@ int Merlin::run() {
 			}
 		} else if ( m_task == MERLIN_TASK_MAR ) {
 //			std::string output_file = m_filename + ".merlin.MAR";
-			std::string output_file = m_filename + ".MAR";
+			size_t found = m_filename.find_last_of("/");
+			std::string prob_name = (found != std::string::npos) ?
+					m_filename.substr(found + 1) : m_filename;
+			std::string output_file = "./" + prob_name + ".MAR";
+
 			if (m_algorithm == MERLIN_ALGO_WMB) {
 				merlin::wmb s(fs);
 				std::ostringstream oss;
 				oss << "iBound=" << m_param_ibound << ","
 					<< "Order=MinFill" << ","
+					<< "OrderIter=100" << ","
 					<< "Iter=" << m_param_iterations << ","
 					<< "Task=MAR";
 				s.set_properties(oss.str());
@@ -376,12 +386,17 @@ int Merlin::run() {
 			}
 		} else if ( m_task == MERLIN_TASK_MAP ) {
 //			std::string output_file = m_filename + ".merlin.MAP";
-			std::string output_file = m_filename + ".MAP";
+			size_t found = m_filename.find_last_of("/");
+			std::string prob_name = (found != std::string::npos) ?
+					m_filename.substr(found + 1) : m_filename;
+			std::string output_file = "./" + prob_name + ".MPE";
+
 			if (m_algorithm == MERLIN_ALGO_WMB) {
 				merlin::wmb s(fs);
 				std::ostringstream oss;
 				oss << "iBound=" << m_param_ibound << ","
 					<< "Order=MinFill" << ","
+					<< "OrderIter=100" << ","
 					<< "Iter=" << m_param_iterations << ","
 					<< "Task=MAP";
 				s.set_properties(oss.str());
@@ -443,12 +458,17 @@ int Merlin::run() {
 			// follow with search-based AOBB, AOBF, RBFAOO
 		} else if ( m_task == MERLIN_TASK_MMAP ) {
 //			std::string output_file = m_filename + ".merlin.MMAP";
-			std::string output_file = m_filename + ".MMAP";
+			size_t found = m_filename.find_last_of("/");
+			std::string prob_name = (found != std::string::npos) ?
+					m_filename.substr(found + 1) : m_filename;
+			std::string output_file = "./" + prob_name + ".MMAP";
+
 			if (m_algorithm == MERLIN_ALGO_WMB) {
 				merlin::wmb s(fs);
 				std::ostringstream oss;
 				oss << "iBound=" << m_param_ibound << ","
 					<< "Order=MinFill" << ","
+					<< "OrderIter=100" << ","
 					<< "Iter=" << m_param_iterations << ","
 					<< "Task=MMAP";
 				s.set_properties(oss.str());

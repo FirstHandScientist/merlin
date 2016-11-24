@@ -180,7 +180,7 @@ public:
 			for (size_t j = 0; j < nval; j++) {
 				size_t k = ci.convert(j);	// get the index in the factor table
 				is >> fval; // read the factor value;
-				if (fval == 0.0) fval = 1e-06; // for numerical stability
+				//if (fval == 0.0) fval = 1e-16; // for numerical stability
 				tables[i][k] = fval; // save the factor value into the table
 			}
 		}
@@ -1309,7 +1309,7 @@ public:
 
 			// Pick one of the minimal score nodes (with score >= 1),
 			// breaking ties randomly
-			size_t cand = candidates[randi(candidates.size())];
+			size_t cand = candidates[randi2(candidates.size())];
 			//size_t cand = candidates[0]; // first candidate in list (lexicograhically)
 			order.push_back(cand);
 			--num_nodes;

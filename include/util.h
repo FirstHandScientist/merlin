@@ -134,6 +134,7 @@ inline void rand_seed() {
 inline void rand_seed(size_t s) {
 	srand(s);
 }
+// randu returns a random number in [0..1]
 inline double randu() {
 	return rand() / double(RAND_MAX);
 }
@@ -145,6 +146,12 @@ inline int randi(int imax) {
 		return 0;
 	int guard = (int) (randu() * imax) + 1;
 	return (guard > imax) ? imax : guard;
+}
+// randi returns a random integer in 0..imax-1
+inline int randi2(int imax) {
+	assert(imax > 0);
+	int guard = (int) (randu() * imax);
+	return (guard >= imax) ? imax-1 : guard;
 }
 inline double randn() {  // Marsaglia polar method
 	double u, v, s;

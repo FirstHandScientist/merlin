@@ -63,9 +63,9 @@ class factor {
 public:
 	// Typedefs:
 
-	typedef double value;			///< A real value.
+	typedef double value;					///< A real value.
 	typedef variable_set::vindex vindex;	///< Variable identifiers (0...N-1)
-	typedef variable_set::vsize vsize;    ///< Variable values (0...K-1)
+	typedef variable_set::vsize vsize;    	///< Variable values (0...K-1)
 
 	// Constructors and destructor:
 

@@ -16,6 +16,7 @@
 #include <string>
 #include <iostream>
 #include "merlin.h"
+#include "util.h"
 
 // Debugging only
 void demo_debug() {
@@ -142,7 +143,7 @@ void uai(int argc, char** argv) {
 		task = MERLIN_TASK_PR;
 	} else if (strcmp(input_task, "MAR") == 0) {
 		task = MERLIN_TASK_MAR;
-	} else if (strcmp(input_task, "MAP") == 0) {
+	} else if (strcmp(input_task, "MPE") == 0) {
 		task = MERLIN_TASK_MAP;
 	} else if (strcmp(input_task, "MMAP") == 0) {
 		task = MERLIN_TASK_MMAP;

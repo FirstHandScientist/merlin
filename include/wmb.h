@@ -128,8 +128,11 @@ public:
 			const std::map<size_t, size_t>& old2new, const graphical_model& orig,
 			const bool first = true) {
 
-		// Open the output file (for append)
-		std::ofstream out(file_name, std::ios::out | std::ios::app);
+		// Open the output file (for overwrite or append)
+		std::ofstream out;
+		if (first) out.open(file_name);
+		else out.open(file_name, std::ios::out | std::ios::app);
+
 		if (out.fail()) {
 			throw std::runtime_error("Error while opening the output file.");
 		}
@@ -183,7 +186,7 @@ public:
 			}
 		case Task::MAP:
 			{
-				if (first) out << "MAP" << std::endl;
+				if (first) out << "MPE" << std::endl;
 				else out << "-BEGIN-" << std::endl;
 				out << orig.nvar();
 				for (vindex i = 0; i < orig.nvar(); ++i) {
@@ -301,7 +304,7 @@ public:
 	///
 	/// \brief Properties of the algorithm
 	///
-	MER_ENUM( Property , iBound,Order,Task,Iter,Debug );
+	MER_ENUM( Property , iBound,Order,Task,Iter,Debug,OrderIter );
 
 
 	// Setting properties (directly or through property string):
@@ -404,7 +407,7 @@ public:
 	///	
 	virtual void set_properties(std::string opt = std::string()) {
 		if (opt.length() == 0) {
-			set_properties("iBound=4,Order=MinFill,Iter=100,Task=MMAP,Debug=0");
+			set_properties("iBound=4,Order=MinFill,Iter=100,Task=MMAP,Debug=0,OrderIter=1");
 			return;
 		}
 		m_debug = false;
@@ -425,6 +428,9 @@ public:
 				break;
 			case Property::Iter:
 				m_num_iter = atol(asgn[1].c_str());
+				break;
+			case Property::OrderIter:
+				m_order_iter = atol(asgn[1].c_str());
 				break;
 			case Property::Debug:
 				if (atol(asgn[1].c_str()) == 0) m_debug = false;
@@ -529,7 +535,17 @@ public:
 
 		if (m_order.size() == 0) { // if we need to construct an elimination ordering
 			//m_order = m_gmo.order(m_order_method, m_var_types);
-			m_order = m_gmo.order2(m_order_method, m_var_types);
+			//m_order = m_gmo.order2(m_order_method, m_var_types);
+			variable_order_t ord;
+			size_t min_w = 1000000;
+			for (size_t i = 1; i <= m_order_iter; ++i) {
+				ord = m_gmo.order2(m_order_method, m_var_types);
+				size_t w = m_gmo.induced_width(ord);
+				if (w < min_w) {
+					m_order = ord;
+					min_w = w;
+				}
+			}
 			m_parents.clear(); // (new elim order => need new pseudotree)
 			std::copy(m_order.begin(), m_order.end(),
 				std::ostream_iterator<size_t>(std::cout, " "));
@@ -1243,6 +1259,7 @@ protected:
 	graphical_model m_gmo; 				///< Original graphical model
 	Task m_task;						///< Inference task
 	OrderMethod m_order_method;			///< Variable ordering method
+	size_t m_order_iter;				///< Number of iterations for ordering heuristic
 	size_t m_ibound;					///< Mini-bucket i-bound
 	double m_log_z;						///< Log partition function value
 	variable_order_t m_order;			///< Variable order

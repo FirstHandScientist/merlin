@@ -22,12 +22,12 @@
 void demo_debug() {
 
 	// Init parameters
-	unsigned int ibound = 2;
-	unsigned int iterations = 10;
+	unsigned int ibound = 10;
+	unsigned int iterations = 100;
 	unsigned int samples = 1000;
-	const char* inputFile = "/home/radu/git/merlin/test/mrf.wcnf.uai";
+	const char* inputFile = "/home/radu/workspace/ibm-map/data/50-12-5.uai";
 	const char* evidenceFile = "/home/radu/git/merlin/example/simple5.evid";
-	const char* queryFile = "/home/radu/git/merlin/example/simple5.map";
+	const char* queryFile = "/home/radu/workspace/ibm-map/data/50-12-5.uai.map.N";
 	const char* outputFile = "/home/radu/git/merlin/example/simple5.out";
 
 //	const char* inputFile = "/home/radu/Downloads/chain.xmlbif.UAI";
@@ -45,8 +45,8 @@ void demo_debug() {
 	eng.read_model(inputFile);
 	eng.read_evidence(evidenceFile);
 //	eng.read_query(queryFile);
-	eng.set_task(MERLIN_TASK_MAR);
-	eng.set_algorithm(MERLIN_ALGO_GIBBS);
+	eng.set_task(MERLIN_TASK_PR);
+	eng.set_algorithm(MERLIN_ALGO_WMB);
 	eng.run();
 }
 
@@ -170,7 +170,7 @@ void uai(int argc, char** argv) {
 int main(int argc, char** argv) {
 
 	// Call the "uai" solver
-	uai(argc, argv);
+//	uai(argc, argv);
 
 	// Call the 'run' function
 	//demo_run();
@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
 	//demo_api();
 
 	// Call the 'debug' function
-//	demo_debug();
+	demo_debug();
 
 //	demo_convert(argv[1]);
 

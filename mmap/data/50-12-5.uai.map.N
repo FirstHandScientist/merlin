@@ -1,0 +1,2 @@
+# MAP variables for 50-12-5.uai; count = 0, means all SUM
+0

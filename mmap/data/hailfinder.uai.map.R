@@ -1,0 +1,19 @@
+# MAP variables for hailfinder.uai; count = 17
+17
+0
+1
+2
+5
+6
+9
+10
+13
+15
+17
+22
+25
+28
+32
+33
+37
+38

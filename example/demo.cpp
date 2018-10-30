@@ -170,7 +170,7 @@ void uai(int argc, char** argv) {
 int main(int argc, char** argv) {
 
 	// Call the "uai" solver
-//	uai(argc, argv);
+	uai(argc, argv);
 
 	// Call the 'run' function
 	//demo_run();
@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
 	//demo_api();
 
 	// Call the 'debug' function
-	demo_debug();
+	//demo_debug();
 
 //	demo_convert(argv[1]);
 
